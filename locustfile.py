@@ -3,7 +3,7 @@ from locust import HttpUser, task, between
 
 
 class QuickstartUser(HttpUser):
-    wait_time = between(1, 5)
+    wait_time = between(1, 1)
 
     # @task(10)
     # def home(self):
@@ -25,14 +25,18 @@ class QuickstartUser(HttpUser):
     # def random_status(self):
     #     self.client.get("/random_status", name="/random_status")
 
-    @task(3)
+    # @task(3)
     def clickhouse_sync(self):
         self.client.get("/clickhouse_sync", name="/clickhouse_sync")
 
-    @task(3)
+    # @task(3)
     def clickhouse_async(self):
         self.client.get("/clickhouse_async", name="/clickhouse_async")
 
+    @task()
+    def sleep_sync(self):
+        self.client.get("/sleep_sync", name="/sleep_sync") 
+    
     # @task()
-    # def random_sleep(self):
-    #     self.client.get("/error_test", name="/error_test") 
+    def sleep_async(self):
+        self.client.get("/sleep_async", name="/sleep_async")

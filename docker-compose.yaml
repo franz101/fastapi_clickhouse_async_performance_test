@@ -18,7 +18,7 @@ services:
     ports:
       - "3100:3100"
 
-  app-a:
+  app-main:
     build: ./fastapi_app/
     #image: ghcr.io/blueswen/fastapi-observability/app:latest
     ports:
@@ -26,30 +26,35 @@ services:
     depends_on:
       - loki
     environment:
-      APP_NAME: "app-a"
+      APP_NAME: "app-main"
     logging: *default-logging
+    volumes:
+      - ./fastapi_app/main.py:/app/main.py
+      - ./fastapi_app/database.py:/app/database.py
+    networks:
+      - api_default
 
-  app-b:
-    build: ./fastapi_app/
-    #image: ghcr.io/blueswen/fastapi-observability/app:latest
-    ports:
-      - "8001:8000"
-    depends_on:
-      - loki
-    environment:
-      APP_NAME: "app-b"
-    logging: *default-logging
+  # app-b:
+  #   build: ./fastapi_app/
+  #   #image: ghcr.io/blueswen/fastapi-observability/app:latest
+  #   ports:
+  #     - "8001:8000"
+  #   depends_on:
+  #     - loki
+  #   environment:
+  #     APP_NAME: "app-b"
+  #   logging: *default-logging
 
-  app-c:
-    build: ./fastapi_app/
-    #image: ghcr.io/blueswen/fastapi-observability/app:latest
-    ports:
-      - "8002:8000"
-    depends_on:
-      - loki
-    environment:
-      APP_NAME: "app-c"
-    logging: *default-logging
+  # app-c:
+  #   build: ./fastapi_app/
+  #   #image: ghcr.io/blueswen/fastapi-observability/app:latest
+  #   ports:
+  #     - "8002:8000"
+  #   depends_on:
+  #     - loki
+  #   environment:
+  #     APP_NAME: "app-c"
+  #   logging: *default-logging
 
   prometheus:
     image: prom/prometheus:v2.51.2
@@ -86,3 +91,7 @@ services:
       - loki
       - prometheus
     logging: *default-logging
+
+networks:
+  api_default:
+    external: true

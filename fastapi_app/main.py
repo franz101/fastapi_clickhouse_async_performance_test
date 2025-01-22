@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 import random
@@ -152,10 +153,24 @@ async def clickhouse_async(response: Response, session: AsyncSession = Depends(g
     headers = {}
     inject(headers)  # inject trace info to header
     logging.critical(headers)
-    await session.execute(text("SELECT sleep(2)"))
+    await session.execute(text("SELECT sleep(1)"))
     return {"path": "/clickhouse_async"}
 
+@app.get("/sleep_sync")
+def sleep_sync(response: Response):
+    headers = {}
+    inject(headers)  # inject trace info to header
+    logging.critical(headers)
+    time.sleep(1)
+    return {"path": "/sleep_sync"}
 
+@app.get("/sleep_async")
+async def sleep_sync(response: Response):
+    headers = {}
+    inject(headers)  # inject trace info to header
+    logging.critical(headers)
+    asyncio.sleep(1)
+    return {"path": "/sleep_async"}
 
 if __name__ == "__main__":
     # update uvicorn access logger format
@@ -163,4 +178,4 @@ if __name__ == "__main__":
     log_config["formatters"]["access"][
         "fmt"
     ] = "%(asctime)s %(levelname)s [%(name)s] [%(filename)s:%(lineno)d] [trace_id=%(otelTraceID)s span_id=%(otelSpanID)s resource.service.name=%(otelServiceName)s] - %(message)s"
-    uvicorn.run("main:app", host="0.0.0.0", port=EXPOSE_PORT, log_config=log_config, workers=4)
+    uvicorn.run("main:app", host="0.0.0.0", port=EXPOSE_PORT, log_config=log_config, workers=2)

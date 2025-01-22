@@ -9,10 +9,10 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import Session, scoped_session, sessionmaker
 
 
-asynch_uri = "clickhouse+asynch://galileo:observe@127.0.0.1:19000/galileo_chdb"
+asynch_uri = "clickhouse+asynch://galileo:observe@galileo-clickhouse:9000/galileo_chdb"
 asynch_engine = create_async_engine(asynch_uri)
 AsyncSessionLocal = sessionmaker(bind=asynch_engine, class_=AsyncSession, expire_on_commit=False)  # type: ignore[call-overload]
-db_write_engine = create_engine( "clickhouse+native://galileo:observe@127.0.0.1:19000/galileo_chdb")
+db_write_engine = create_engine( "clickhouse+native://galileo:observe@galileo-clickhouse:9000/galileo_chdb")
 SessionLocalWriter = scoped_session(sessionmaker(bind=db_write_engine, class_=Session))
 
 async def clickhouse_client_async_session() -> AsyncGenerator:
